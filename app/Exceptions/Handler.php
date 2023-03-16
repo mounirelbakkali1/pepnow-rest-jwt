@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use PDOException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -43,6 +45,21 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+        $this->renderable(function (NotFoundHttpException $e) {
+            if (request()->is('api/*')) {
+                return response()->json([
+                    'message' => 'Not Found',
+                ], 404);
+            }
+        });
+        $this->renderable(function (PDOException $e) {
+            if (request()->is('api/*')) {
+                return response()->json([
+                    'status' => 'Database error',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
         });
     }
 }
