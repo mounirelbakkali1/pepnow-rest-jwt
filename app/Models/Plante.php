@@ -11,12 +11,12 @@ class Plante extends Model
 
 
     protected $fillable = [
-        'name',
+        'nom',
         'description',
         'image',
-        'price',
+        'prix',
         'stock',
-        'category_id',
+        'categorie_id',
     ];
 
     public function category()
