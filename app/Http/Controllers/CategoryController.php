@@ -74,4 +74,21 @@ class CategoryController extends Controller
     {
         //
     }
+
+    public function getPlantesByCategory($category_id){
+        $category = Category::find($category_id);
+        if (!$category) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'category not found',
+                'data' => null
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'all plants by category',
+            'data' => $category->plantes
+        ], 200);
+    }
+
 }

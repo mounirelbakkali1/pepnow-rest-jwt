@@ -19,5 +19,6 @@ Route::group(['prefix'=>'v1'],function (){
     });
     Route::apiResource('plantes', PlanteController::class);
     Route::apiResource('categories', CategoryController::class);
+    Route::get('categories/{category}/plantes',[CategoryController::class,'getPlantesByCategory']);
 });
 

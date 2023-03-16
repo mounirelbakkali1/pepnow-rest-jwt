@@ -17,6 +17,6 @@ class Category extends Model
 
     public function plantes()
     {
-        return $this->hasMany(Plante::class);
+        return $this->hasMany(Plante::class, 'categorie_id');
     }
 }
