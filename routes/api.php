@@ -1,18 +1,23 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PlanteController;
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::controller(AuthController::class)->group(function () {
-    Route::post('login', 'login');
-    Route::post('register', 'register');
-    Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
+
+
+
+Route::group(['prefix'=>'v1'],function (){
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('login', 'login');
+        Route::post('register', 'register');
+        Route::post('logout', 'logout');
+        Route::post('refresh', 'refresh');
+    });
+    Route::apiResource('plantes', PlanteController::class);
+    Route::apiResource('categories', CategoryController::class);
 });
-
-
-
-
 

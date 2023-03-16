@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use function response;
 
 class AuthController extends Controller
@@ -20,10 +22,14 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string'
+        ],[
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required'
         ]);
         $credentials = request(['email', 'password']);
         // todo : creating token and login user
-        $token = Auth::attempt($credentials);
+        // create token
+        $token = JWTAuth::attempt($credentials);
         if(!$token){
             return response()->json([
                 'status' => 'login failed',
@@ -36,8 +42,7 @@ class AuthController extends Controller
             'user'=> $user,
             'authorization' => [
                 'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => Auth::factory()->getTTL() * 60
+                'token_type' => 'bearer'
             ]
         ]);
     }
@@ -47,7 +52,11 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
+            'password' => 'required|string'
+        ],[
+            'name.required' => 'Name is required',
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required'
         ]);
         $user = User::create([
             'name' => $request->name,
