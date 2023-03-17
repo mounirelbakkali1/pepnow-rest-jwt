@@ -89,13 +89,24 @@ class AuthController extends Controller
       ]);
     }
 
-    public function  userInfo(User $user){
+    public function  userInfo($user_id){
+        $this->authorize('read users', User::class);
+        $user = User::with('roles.permissions')->findOrFail($user_id);
+        $roles = $user->roles->pluck('name');
+        $permissions = $user->roles->flatMap(function ($role) {
+            return $role->permissions->pluck('name');
+        })->unique();
+
         return response()->json([
             'status' => 'success',
             'message' => 'user info',
-            'user' => $user,
-            'role'=> $user->roles,
-            'permissions' => $user->getPermissionsViaRoles()
-        ],200);
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $roles,
+                'permissions' => $permissions
+            ],
+        ], 200);
     }
 }

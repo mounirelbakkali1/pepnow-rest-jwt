@@ -22,13 +22,16 @@ class UserFactory extends Factory
         'user'=>[
             'read plantes',
             'read categories',
+            'update profile',
         ],
         'seller'=>[
+            'update profile',
             'read plantes',
             'read categories',
             'create plantes',
             'update plantes',
             'delete plantes',
+            'restore plantes'
         ],
         'admin'=>[
             'read plantes',
@@ -39,6 +42,17 @@ class UserFactory extends Factory
             'create categories',
             'update categories',
             'delete categories',
+            'read users',
+            'delete users',
+            'add roles',
+            'delete roles',
+            'update roles',
+            'add permissions',
+            'delete permissions',
+            'update permissions',
+            'create users',
+            'update users',
+            'update profile',
         ]
     ];
     private $roles;
@@ -53,7 +67,7 @@ class UserFactory extends Factory
        foreach ($this->rolesNames as $role){
            $role_created = Role::firstOrCreate(['name'=>$role]);
            foreach ($this->permissions[$role] as $permissionName){
-               $permission = Permission::firstOrCreate(['name'=>$permissionName]);
+               $permission = Permission::firstOrCreate(['name'=>$permissionName,'guard_name' => 'api']);
                $role_created->givePermissionTo($permission);
            }
             $this->roles[] = $role_created;

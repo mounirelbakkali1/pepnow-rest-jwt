@@ -30,6 +30,7 @@ class PlanteController extends Controller
 
     public function store(StorePlanteRequest $request)
     {
+        $this->authorize('create plants', Plante::class);
         $validated_plante = $request->validated();
         $plante = Plante::create($validated_plante);
         return response()->json([
@@ -64,12 +65,23 @@ class PlanteController extends Controller
 
     public function update(UpdatePlanteRequest $request, Plante $plante)
     {
-        //
+        $this->authorize('update plants', Plante::class);
+        $validated = $request->validated();
+        try {
+            $plante->update($validated);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error updating plante', 'error' => $e->getMessage()], 500);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'plante updated',
+            'data' => $plante
+        ], 200);
     }
 
 
     public function destroy(Plante $plante)
     {
-        //
+        $this->authorize('delete plants', Plante::class);
     }
 }

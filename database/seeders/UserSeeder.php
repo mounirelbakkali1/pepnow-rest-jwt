@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
     private $rolesNames = ['user', 'admin','seller'];
     public function run(): void
     {
-        User::factory()->count(10)->create()->each(function ($user) {
+        User::factory()->count(5)->create()->each(function ($user) {
             $user->assignRole($this->rolesNames[rand(0,2)]);
         });
     }
