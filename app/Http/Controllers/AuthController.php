@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\UpdateProfilInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -107,6 +109,58 @@ class AuthController extends Controller
                 'roles' => $roles,
                 'permissions' => $permissions
             ],
+        ], 200);
+    }
+
+    public function updateUserInfo(Request $request, $user_id){
+        $this->authorize('update users', User::class);
+        $user = User::findOrFail($user_id);
+        $user->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'user info updated',
+            'user' => $user
+        ], 200);
+    }
+
+    public function deleteUser($user_id){
+        $this->authorize('delete users', User::class);
+        $user = User::findOrFail($user_id);
+        $user->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'user deleted',
+            'user' => $user
+        ], 200);
+    }
+
+    public function updateProfile(UpdateProfilInfo $request, $user_id){
+        $this->authorize('update profile', User::class);
+        $user = User::findOrFail($user_id);
+        $request=$request->validated();
+        $user->update([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password'])
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'profil updated',
+            'user' => $user
+        ], 200);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request){
+        $this->authorize('update profile', User::class);
+        $user = User::findOrFail($request->user_id);
+        $request->validated();
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'password updated',
+            'user' => $user
         ], 200);
     }
 }

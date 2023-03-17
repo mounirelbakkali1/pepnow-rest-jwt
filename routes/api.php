@@ -16,9 +16,12 @@ Route::group(['prefix'=>'v1'],function (){
         Route::post('register', 'register');
         Route::post('logout', 'logout');
         Route::post('refresh', 'refresh');
-    });
-    Route::get('users/{user}',[AuthController::class,'userInfo']);
+        Route::post('users/{user}', 'userInfo');
+        Route::put('users/{user}', 'updateUser');
+        Route::get('users/{user}', 'userInfo');
+        Route::post('users/{user}/password', 'resetPassword');
 
+    });
 
     Route::apiResource('plantes', PlanteController::class);
     Route::apiResource('categories', CategoryController::class);
