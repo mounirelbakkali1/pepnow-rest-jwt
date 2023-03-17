@@ -17,6 +17,9 @@ Route::group(['prefix'=>'v1'],function (){
         Route::post('logout', 'logout');
         Route::post('refresh', 'refresh');
     });
+    Route::get('users/{user}',[AuthController::class,'userInfo']);
+
+
     Route::apiResource('plantes', PlanteController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::get('categories/{category}/plantes',[CategoryController::class,'getPlantesByCategory']);

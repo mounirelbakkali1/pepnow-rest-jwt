@@ -2,14 +2,65 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Mockery\Exception;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use function rand;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
+
+    private $rolesNames = ['user', 'admin','seller'];
+    private $permissions=[
+        'user'=>[
+            'read plantes',
+            'read categories',
+        ],
+        'seller'=>[
+            'read plantes',
+            'read categories',
+            'create plantes',
+            'update plantes',
+            'delete plantes',
+        ],
+        'admin'=>[
+            'read plantes',
+            'read categories',
+            'create plantes',
+            'update plantes',
+            'delete plantes',
+            'create categories',
+            'update categories',
+            'delete categories',
+        ]
+    ];
+    private $roles;
+
+    /**
+     * @param string[] $roles
+     * @param \string[][] $permissions
+     */
+    public function __construct()
+    {
+        parent::__construct();
+       foreach ($this->rolesNames as $role){
+           $role_created = Role::firstOrCreate(['name'=>$role]);
+           foreach ($this->permissions[$role] as $permissionName){
+               $permission = Permission::firstOrCreate(['name'=>$permissionName]);
+               $role_created->givePermissionTo($permission);
+           }
+            $this->roles[] = $role_created;
+       }
+    }
+
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +72,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make("azer1234"), // password
             'remember_token' => Str::random(10),
         ];
     }
@@ -35,4 +86,6 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+
 }

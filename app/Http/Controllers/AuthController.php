@@ -88,4 +88,14 @@ class AuthController extends Controller
           ]
       ]);
     }
+
+    public function  userInfo(User $user){
+        return response()->json([
+            'status' => 'success',
+            'message' => 'user info',
+            'user' => $user,
+            'role'=> $user->roles,
+            'permissions' => $user->getPermissionsViaRoles()
+        ],200);
+    }
 }
